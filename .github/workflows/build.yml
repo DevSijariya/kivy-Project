@@ -1,14 +1,20 @@
 name: Build
-on: [push, pull_request]
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  # Build job. Builds app for Android with Buildozer
   build-android:
     name: Build for Android
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python
@@ -16,13 +22,16 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install Buildozer
-        run: pip install buildozer
+      - name: Install dependencies
+        run: |
+          pip install buildozer
+          pip install cython
+          pip install kivy
 
       - name: Build with Buildozer
         run: buildozer android debug
 
-      - name: Upload artifacts
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: package
